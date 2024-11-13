@@ -171,7 +171,7 @@ d$pc <- predict(prcomp(~a+b, d))[,1]
 
 # Plot
 ggplot(d, aes(a, b, color = pc)) +
-  geom_point(shape = 16, size = 5, show.legend = FALSE, alpha = 0.4) +
+  geom_point(shape = 16, size = 2, show.legend = FALSE, alpha = 0.4) +
   theme_minimal() +
   scale_color_gradient(low = "#0091FF", high = "#F0650E") + labs(x = "", y = "") +
   scale_x_continuous(breaks = round(seq(-2,2, by = 1),0))
@@ -436,6 +436,9 @@ row and one variable per column):
 
 ```{r}
 head(iris)
+```
+
+```{r}
 class(iris)
 nrow(iris)
 ncol(iris)
@@ -467,7 +470,7 @@ To represent any graph in `ggplot2` we need two basic functions that are
 combined with a `+` sign:
 
 ```{r scatter-ggplot2}
-ggplot(data = iris, mapping = aes(x = Sepal.Width, y = Sepal.Length) +
+ggplot(data = iris, mapping = aes(x = Sepal.Width, y = Sepal.Length)) +
   geom_point()
 ```
 
@@ -535,6 +538,9 @@ automobile design and performance for 32 automobiles**.
 
 ```{r}
 head(mtcars)
+```
+
+```{r}
 class(mtcars)
 ```
 
@@ -669,7 +675,11 @@ gear: cars can have 3, 4 and 5 gears. Check if you need to transform
 ##### <i class="fas fa-comment-dots"></i> Answer:
 
 ```{r positions-ggplot2 answer2.2}
+class(mtcars$gear)
 
+mtcars$gear_f <- as.factor(mtcars$gear)
+ggplot(data = mtcars, mapping = aes(x = cyl_f, fill = gear_f)) +
+  geom_bar(position = "fill")
 ```
 :::
 
@@ -686,6 +696,9 @@ different ranges as bars.
 
 ```{r}
 head(diamonds)
+```
+
+```{r}
 class(diamonds)
 ```
 
@@ -861,6 +874,7 @@ p <- ggplot(data = diamonds, mapping = aes(x = carat, fill = cut)) +
 # Option A:
 p + scale_fill_manual(values = c("sienna1", "orange", "lightseagreen", "orangered", "red4"), name = "Quality") +
   scale_x_continuous(name = "Weight of the diamond") + 
+  scale_y_continuous(name = "Number")
   ggtitle("Diamond weight variation")
 
 # Option B:
@@ -885,7 +899,7 @@ ggplot(data = diamonds, mapping = aes(x = carat, fill = cut)) +
   scale_fill_manual(values = c("sienna1", "orange", "lightseagreen", "orangered", "red4"), name = "Quality") +
   scale_x_continuous(name = "Weight of the diamond") + 
   ggtitle("Diamond weight variation") +
-  theme_bw()
+  theme_minimal()
 ```
 
 ### <i class="fas fa-cogs"></i> Exercise
@@ -901,8 +915,33 @@ colourblind people can distinguish the colours, `scale_fill_hue()` or
 ##### <i class="fas fa-comment-dots"></i> Answer:
 
 ```{r answer5.1}
+ggplot(data = diamonds, mapping = aes(x = carat, fill = cut)) +
+  geom_histogram(position = "dodge", binwidth = 0.3) + 
+  facet_grid(. ~ cut) +
+  scale_fill_hue() + 
+  scale_x_continuous(name = "Weight of the diamond") + 
+  ggtitle("Diamond weight variation") +
+  theme_minimal()
 
+ggplot(data = diamonds, mapping = aes(x = carat, fill = cut)) +
+  geom_histogram(position = "dodge", binwidth = 0.3) + 
+  facet_grid(. ~ cut) +
+  scale_fill_brewer() + 
+  scale_x_continuous(name = "Weight of the diamond") + 
+  ggtitle("Diamond weight variation") +
+  theme_minimal()
+
+ggplot(data = diamonds, mapping = aes(x = carat, fill = cut)) +
+  geom_histogram(position = "dodge", binwidth = 0.3) + 
+  facet_grid(. ~ cut) +
+  scale_fill_viridis_d() + 
+  scale_x_continuous(name = "Weight of the diamond") + 
+  ggtitle("Diamond weight variation") +
+  theme_minimal()
 ```
+
+The standard pallete "viris_d" is friendly to colorblind people, because
+each class has a distinct lightness.
 :::
 
 Try `subtitle = ""`, `caption =""` and `tag =""` arguments from the
@@ -912,7 +951,13 @@ Try `subtitle = ""`, `caption =""` and `tag =""` arguments from the
 ##### <i class="fas fa-comment-dots"></i> Answer:
 
 ```{r answer5.2}
-
+ggplot(data = diamonds, mapping = aes(x = carat, fill = cut)) +
+  geom_histogram(position = "dodge", binwidth = 0.3) + 
+  facet_grid(. ~ cut) +
+  scale_fill_viridis_d() + 
+  labs(title="Diamond weight variation", x="Weight in Karat", y = "Number", subtitle = "distinguished by quality", tag="Figure 1", caption="captioncaption captioncaption") + 
+  
+  theme_minimal()
 ```
 :::
 
@@ -926,6 +971,8 @@ think that maximizes the data-ink ratio?
 ```{r answer5.3}
 
 ```
+
+The minimal theme.
 :::
 
 ------------------------------------------------------------------------
@@ -945,7 +992,7 @@ B. `ggsave` function from `ggplot2` package
 
 p <- ggplot(data = iris, mapping = aes(x = Sepal.Width, y = Sepal.Length)) + geom_point()
 
-ggsave(filename = "plot.png", plot = p, width = 6, height = 4) # In inches by default
+ggsave(filename = "saving_test.png", plot = p, width = 6, height = 4) # In inches by default
 ```
 
 Plots can be saved using different image file formats. Option **A**
@@ -990,7 +1037,7 @@ package and other system libraries (`libcairo2-dev` and
 ##### <i class="fas fa-comment-dots"></i> Answer:
 
 ```{r answer 6.1}
-
+ggsave(filename = "saving_test.svg", plot = p, width = 6, height = 4)
 ```
 :::
 
@@ -1013,7 +1060,11 @@ If for representing a scatter plot we use `geom_point()`, a bar plot
 ##### <i class="fas fa-comment-dots"></i> Answer:
 
 ```{r wrap-exercise-line-plot}
-
+p <- ggplot(data = economics, aes(x = date)) + 
+  geom_line(aes(y=unemploy), color="darkred")
+  labs(title="Unemployment in the US", x="Year", y="unemployed in thousend" ) 
+p
+ggsave(filename="us_unemployment.png", plot=p, width=6, height=4)
 ```
 :::
 
@@ -1030,7 +1081,7 @@ Each group has been assigned a plot. With your knowledge on `ggplot2`
 try to write the code that reproduce the same figure.
 
 | Group | Dataset | Description | Hint |
-|---------------|---------------|-------------------|-----------------------|
+|------------------|------------------|------------------|--------------------|
 | 1 | `Titanic` | Survival of passengers on the Titanic | Color palette is: "#79AEB2", "#4A6274" |
 | 2 | `ToothGrowth` | The Effect of Vitamin C on Tooth Growth in Guinea Pigs | Color palette is: "#58A6A6", "#EFA355" |
 | 3 | `msleep` | An updated and expanded version of the mammals sleep dataset. | You can color in gray the NA values inside the scale_fill (na.value = "grey80") |
@@ -1059,7 +1110,36 @@ try to write the code that reproduce the same figure.
 </a>
 
 ```{r reproducing-ggplot2}
+head(msleep)
+msleep$vore_f = as.factor(msleep$vore)
 
+ggplot(msleep, mapping = aes(x = vore_f, y = sleep_total, fill=conservation)) + 
+  scale_fill_viridis_d(na.value="grey80") + geom_col() + 
+  labs(title="Animal sleep times", y="Sleep time in hours", caption="Source:msleep", x="")
+```
+
+```{r reproducing-ggplot2}
+head(diamonds)
+diamonds$clarity_f = as.factor(diamonds$clarity)
+
+ggplot(diamonds, mapping = aes(x = price, y = carat, colour=clarity_f)) + 
+  geom_point() +
+  scale_fill_viridis_d(name="Clarity") + 
+  facet_grid(. ~ cut) +
+  labs(title="Diamond Price per Carat", caption="Source:diamonds", x="Price in US dollars", y="Weight in carat")
+```
+
+```{r}
+head(midwest)
+
+midwest$state_f = as.factor(midwest$state)
+
+ggplot(data = midwest, mapping = aes(x=area, y=poptotal, color=state_f, size=popdensity)) +
+  geom_point() +
+  scale_color_viridis_d() + 
+  scale_y_continuous(trans="log10")
+  
+  
 ```
 
 # 8. Upload your results to your GitHub
