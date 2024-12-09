@@ -3,3 +3,7 @@
 **/PFAM_seqs
 **/Data
 **/animals.txt
+**/Data
+**/animals.txt
+*.RData
+*.Rhistory
