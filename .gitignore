@@ -7,3 +7,4 @@
 **/animals.txt
 *.RData
 *.Rhistory
+**/temporary.py
